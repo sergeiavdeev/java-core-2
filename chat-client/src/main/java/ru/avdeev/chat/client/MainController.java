@@ -2,6 +2,7 @@ package ru.avdeev.chat.client;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -14,9 +15,16 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
+    @FXML
     public ListView contactList;
+
+    @FXML
     public TextArea chatArea;
+
+    @FXML
     public TextField messageField;
+
+    @FXML
     public Button btnSend;
 
     public void connectServer(ActionEvent actionEvent) {
