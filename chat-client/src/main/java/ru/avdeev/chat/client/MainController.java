@@ -8,9 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -26,6 +29,8 @@ public class MainController implements Initializable {
 
     @FXML
     public Button btnSend;
+
+    private MediaPlayer player;
 
     public void connectServer(ActionEvent actionEvent) {
     }
@@ -59,6 +64,8 @@ public class MainController implements Initializable {
 
         chatArea.appendText(contact + ": " + message + System.lineSeparator());
         messageField.clear();
+        player.stop();
+        player.play();
     }
 
     @Override
@@ -69,5 +76,8 @@ public class MainController implements Initializable {
             contacts.add("Contact#" + (i + 1));
         }
         contactList.setItems(FXCollections.observableList(contacts));
+
+        Media sound = new Media(Objects.requireNonNull(getClass().getClassLoader().getResource("sound/switch.mp3")).toString());
+        player = new MediaPlayer(sound);
     }
 }
