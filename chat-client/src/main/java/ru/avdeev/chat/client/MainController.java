@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable {
 
     @FXML
-    public ListView contactList;
+    public ListView<String> contactList;
 
     @FXML
     public TextArea chatArea;
@@ -51,13 +51,20 @@ public class MainController implements Initializable {
         if (message.isBlank()) {
             return;
         }
-        chatArea.appendText(message + System.lineSeparator());
+
+        var contact = contactList.getSelectionModel().getSelectedItem();
+        if (contact == null || contact.equals("ALL")) {
+            contact = "ALL";
+        }
+
+        chatArea.appendText(contact + ": " + message + System.lineSeparator());
         messageField.clear();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         var contacts = new ArrayList<String>();
+        contacts.add("ALL");
         for (int i = 0; i < 10; i++) {
             contacts.add("Contact#" + (i + 1));
         }
