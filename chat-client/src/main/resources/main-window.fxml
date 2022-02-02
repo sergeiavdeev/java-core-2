@@ -1,66 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avdeev.chat.client.MainController">
-   <children>
-      <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <MenuBar stylesheets="@css/main.css">
-            <Menu styleClass="menu" text="File">
-               <MenuItem onAction="#connectServer" text="Connect" />
-               <MenuItem onAction="#disconnectServer" text="Disconnect" />
-               <MenuItem onAction="#mockAction" text="Item3" />
-               <MenuItem onAction="#mockAction" text="Item4" />
-               <MenuItem onAction="#mockAction" text="Item5" />
-               <MenuItem onAction="#exit" text="Exit" />
-            </Menu>
-            <Menu styleClass="menu" text="Edit">
-               <MenuItem onAction="#mockAction" text="Item1" />
-               <MenuItem onAction="#mockAction" text="Item2" />
-               <MenuItem onAction="#mockAction" text="Item3" />
-               <MenuItem onAction="#mockAction" text="Item4" />
-               <MenuItem onAction="#mockAction" text="Item5" />
-               <MenuItem onAction="#mockAction" text="Item6" />
-            </Menu>
-            <Menu styleClass="menu" text="View">
-               <MenuItem onAction="#mockAction" text="Item1" />
-               <MenuItem onAction="#mockAction" text="Item2" />
-               <MenuItem onAction="#mockAction" text="Item3" />
-               <MenuItem onAction="#mockAction" text="Item4" />
-               <MenuItem onAction="#mockAction" text="Item5" />
-               <MenuItem onAction="#mockAction" text="Item6" />
-            </Menu>
-            <Menu styleClass="menu" text="Help">
-               <MenuItem onAction="#mockAction" text="Item1" />
-               <MenuItem onAction="#mockAction" text="Item2" />
-               <MenuItem onAction="#mockAction" text="Item3" />
-               <MenuItem onAction="#mockAction" text="Item4" />
-               <MenuItem onAction="#showHelp" text="Help" />
-               <MenuItem onAction="#showAbout" text="About" />
-            </Menu>
-         </MenuBar>
-         <SplitPane dividerPositions="0.35" stylesheets="@css/main.css" VBox.vgrow="ALWAYS">
-           <items>
-             <AnchorPane minWidth="100">
-                  <children>
-                     <ListView fx:id="contactList" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  </children>
-               </AnchorPane>
-             <AnchorPane minWidth="100">
-                  <children>
-                     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <TextArea fx:id="chatArea" editable="false" VBox.vgrow="ALWAYS" />
-                        <HBox VBox.vgrow="NEVER">
-                           <TextField fx:id="messageField" minHeight="40" promptText="You message" HBox.hgrow="ALWAYS" onAction="#sendMessage"/>
-                           <Button fx:id="btnSend" minHeight="40" text="Send" onAction="#sendMessage"/>
-                        </HBox>
-                     </VBox>
-                  </children>
-               </AnchorPane>
-           </items>
-         </SplitPane>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.avdeev.chat.client.MainController">
+   <VBox fx:id="loginPanel" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0"
+         AnchorPane.topAnchor="150.0">
+      <Label text="Login: "/>
+      <TextField fx:id="loginField">
+         <VBox.margin>
+            <Insets bottom="15.0"/>
+         </VBox.margin>
+      </TextField>
+      <Label text="Password: "/>
+      <PasswordField fx:id="passwordField">
+         <VBox.margin>
+            <Insets bottom="15.0"/>
+         </VBox.margin>
+      </PasswordField>
+      <VBox alignment="CENTER">
+         <Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" onAction="#sendAuth" text="connect"/>
       </VBox>
-   </children>
+   </VBox>
+   <VBox fx:id="chatPanel" prefHeight="400.0" prefWidth="600.0" visible="false" AnchorPane.bottomAnchor="0.0"
+         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <MenuBar stylesheets="@css/main.css">
+         <Menu text="File">
+            <MenuItem onAction="#connectServer" text="Connect"/>
+            <MenuItem onAction="#disconnectServer" text="Disconnect"/>
+            <MenuItem onAction="#mockAction" text="Item3"/>
+            <MenuItem onAction="#mockAction" text="Item4"/>
+            <MenuItem onAction="#mockAction" text="Item5"/>
+            <MenuItem onAction="#exit" text="Exit"/>
+         </Menu>
+         <Menu text="Edit">
+            <MenuItem onAction="#mockAction" text="Item1"/>
+            <MenuItem onAction="#mockAction" text="Item2"/>
+            <MenuItem onAction="#mockAction" text="Item3"/>
+            <MenuItem onAction="#mockAction" text="Item4"/>
+            <MenuItem onAction="#mockAction" text="Item5"/>
+            <MenuItem onAction="#mockAction" text="Item6"/>
+         </Menu>
+         <Menu text="View">
+            <MenuItem onAction="#mockAction" text="Item1"/>
+            <MenuItem onAction="#mockAction" text="Item2"/>
+            <MenuItem onAction="#mockAction" text="Item3"/>
+            <MenuItem onAction="#mockAction" text="Item4"/>
+            <MenuItem onAction="#mockAction" text="Item5"/>
+            <MenuItem onAction="#mockAction" text="Item6"/>
+         </Menu>
+         <Menu text="Help">
+            <MenuItem onAction="#mockAction" text="Item1"/>
+            <MenuItem onAction="#mockAction" text="Item2"/>
+            <MenuItem onAction="#mockAction" text="Item3"/>
+            <MenuItem onAction="#mockAction" text="Item4"/>
+            <MenuItem onAction="#showHelp" text="Help"/>
+            <MenuItem onAction="#showAbout" text="About"/>
+         </Menu>
+      </MenuBar>
+      <SplitPane dividerPositions="0.35" stylesheets="@css/main.css" VBox.vgrow="ALWAYS">
+         <AnchorPane minWidth="100">
+            <ListView fx:id="contactList" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+         </AnchorPane>
+         <AnchorPane minWidth="100">
+            <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                  AnchorPane.topAnchor="0.0">
+               <TextArea fx:id="chatArea" editable="false" VBox.vgrow="ALWAYS"/>
+               <HBox VBox.vgrow="NEVER">
+                  <TextField fx:id="messageField" minHeight="40" onAction="#sendMessage" promptText="You message"
+                             HBox.hgrow="ALWAYS"/>
+                  <Button fx:id="btnSend" minHeight="40" onAction="#sendMessage" text="Send"/>
+               </HBox>
+            </VBox>
+         </AnchorPane>
+      </SplitPane>
+   </VBox>
 </AnchorPane>
