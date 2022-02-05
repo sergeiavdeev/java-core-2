@@ -54,7 +54,6 @@ public class NetworkService {
                 while (!Thread.currentThread().isInterrupted() && !socket.isClosed()) {
                     var message = inputStream.readUTF();
                     processMessage(message);
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();

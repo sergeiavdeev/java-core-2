@@ -1,5 +1,6 @@
 package ru.avdeev.chat.client;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -32,7 +33,7 @@ public class LoginController {
             var inMessage = new Message(message);
             switch (inMessage.getType()) {
                 case RESPONSE_AUTH_OK -> loginPanel.setVisible(false);
-                case RESPONSE_AUTH_ERROR -> showError("Wrong login or password");
+                case RESPONSE_AUTH_ERROR -> Platform.runLater(() -> showError("Wrong login or password"));
             }
         }));
 
