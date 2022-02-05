@@ -1,9 +1,14 @@
 package ru.avdeev.chat.client.network;
 
+import ru.avdeev.chat.commons.Message;
+import ru.avdeev.chat.commons.PropertyReader;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NetworkService {
 
@@ -12,12 +17,28 @@ public class NetworkService {
     private Socket socket;
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
-    private final MessageProcessor messageProcessor;
+    private final List<MessageProcessor> messageProcessor;
 
-    public NetworkService(String host, int port, MessageProcessor messageProcessor) {
+    private static NetworkService instance;
+
+    private NetworkService(String host, int port) {
         this.host = host;
         this.port = port;
-        this.messageProcessor = messageProcessor;
+        this.messageProcessor = new ArrayList<>();
+    }
+
+    public static NetworkService getInstance() {
+
+        if (instance == null) {
+            instance = new NetworkService(
+                    PropertyReader.getInstance().get("host"),
+                    Integer.parseInt(PropertyReader.getInstance().get("port")));
+        }
+        return instance;
+    }
+
+    public void addMessageProcessor(MessageProcessor processor) {
+        this.messageProcessor.add(processor);
     }
 
     public void connect() throws IOException {
@@ -32,7 +53,8 @@ public class NetworkService {
             try {
                 while (!Thread.currentThread().isInterrupted() && !socket.isClosed()) {
                     var message = inputStream.readUTF();
-                    messageProcessor.processMessage(message);
+                    processMessage(message);
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -42,9 +64,9 @@ public class NetworkService {
         thread.start();
     }
 
-    public void sendMessage(String message) {
+    public void sendMessage(Message message) {
         try {
-            outputStream.writeUTF(message);
+            outputStream.writeUTF(message.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,6 +83,13 @@ public class NetworkService {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void processMessage(String message) {
+        System.out.println(message);
+        for (MessageProcessor process : messageProcessor) {
+            process.processMessage(message);
         }
     }
 }

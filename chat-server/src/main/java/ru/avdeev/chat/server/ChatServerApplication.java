@@ -1,5 +1,6 @@
 package ru.avdeev.chat.server;
 
+import ru.avdeev.chat.commons.PropertyReader;
 import ru.avdeev.chat.server.auth.InMemoryUserService;
 
 public class ChatServerApplication {
@@ -10,6 +11,9 @@ public class ChatServerApplication {
         users.addUser("halk", "456");
         users.addUser("hook", "789");
 
-        new Server(8181, users).start();
+        new Server(
+                Integer.parseInt(PropertyReader.getInstance().get("port")),
+                users
+        ).start();
     }
 }

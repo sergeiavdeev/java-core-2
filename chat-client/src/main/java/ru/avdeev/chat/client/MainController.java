@@ -8,17 +8,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import ru.avdeev.chat.client.network.MessageProcessor;
 import ru.avdeev.chat.client.network.NetworkService;
-import ru.avdeev.chat.server.utils.Helper;
 
-import java.io.IOException;
+import ru.avdeev.chat.commons.Message;
+import ru.avdeev.chat.commons.MessageType;
+
+
 import java.net.URL;
 
 import java.util.Objects;
@@ -31,16 +30,7 @@ public class MainController implements Initializable, MessageProcessor {
     private final ObservableSet<String> contacts = FXCollections.observableSet();
 
     @FXML
-    public VBox loginPanel;
-
-    @FXML
     public VBox chatPanel;
-
-    @FXML
-    public TextField loginField;
-
-    @FXML
-    public PasswordField passwordField;
 
     @FXML
     public ListView<String> contactList;
@@ -83,9 +73,11 @@ public class MainController implements Initializable, MessageProcessor {
 
         var contact = contactList.getSelectionModel().getSelectedItem();
         if (contact == null || contact.equals("ALL")) {
-            networkService.sendMessage(Helper.createMessage("/broadcast", message, ""));
+            //networkService.sendMessage(Helper.createMessage("/broadcast", message, ""));
+            networkService.sendMessage(new Message(MessageType.SEND_ALL, new String[]{message}));
         } else {
-            networkService.sendMessage(Helper.createMessage("/private", contact, message));
+            //networkService.sendMessage(Helper.createMessage("/private", contact, message));
+            networkService.sendMessage(new Message(MessageType.SEND_PRIVATE, new String[]{contact, message}));
             chatArea.appendText(nick + ": " + message + System.lineSeparator());
         }
 
@@ -112,7 +104,8 @@ public class MainController implements Initializable, MessageProcessor {
         Media sound = new Media(Objects.requireNonNull(getClass().getClassLoader().getResource("sound/switch.mp3")).toString());
         player = new MediaPlayer(sound);
 
-        this.networkService = new NetworkService("localhost", 8181, this);
+        this.networkService = NetworkService.getInstance();
+        this.networkService.addMessageProcessor(this);
     }
 
     @Override
@@ -121,54 +114,16 @@ public class MainController implements Initializable, MessageProcessor {
     }
 
     private void parseIncomingMessage(String message) {
-        var params = Helper.parseMessage(message);
-        switch (params[0]) {
-            case "/ok" :
-                this.nick = params[1];
-                loginPanel.setVisible(false);
+        var inMessage = new Message(message);
+        switch (inMessage.getType()) {
+            case RESPONSE_AUTH_OK -> {
+                this.nick = inMessage.getParams().get(0);
                 chatPanel.setVisible(true);
                 ChatApplication.getStage().setTitle("Easy Chat - " + nick);
-                break;
-            case "/broadcast" :
-            case "/private":
-                chatArea.appendText(params[1] + ": " + params[2] + System.lineSeparator());
-                break;
-            case "/error" :
-                showError(params[1]);
-                System.out.println("got error " + params[1]);
-                break;
-            case "/online" :
-                contacts.add(params[1]);
-                break;
-            case "/offline" :
-                contacts.remove(params[1]);
-                break;
-        }
-    }
-
-    private void showError(String message) {
-        var alert = new Alert(Alert.AlertType.ERROR,
-                "An error occurred: " + message,
-                ButtonType.OK);
-        alert.showAndWait();
-    }
-
-    public void sendAuth(ActionEvent actionEvent) {
-        var login = loginField.getText();
-        var password = passwordField.getText();
-        if (login.isBlank() || password.isBlank()) {
-            return;
-        }
-
-        if (!networkService.isConnected()) {
-            try {
-                networkService.connect();
-            } catch (IOException e) {
-                e.printStackTrace();
-                showError(e.getMessage());
-
             }
+            case SEND_ALL, SEND_PRIVATE -> chatArea.appendText(inMessage.getParams().get(0) + ": " + inMessage.getParams().get(1) + System.lineSeparator());
+            case USER_ONLINE -> contacts.add(inMessage.getParams().get(0));
+            case USER_OFFLINE -> contacts.remove(inMessage.getParams().get(0));
         }
-        networkService.sendMessage(Helper.createMessage("/auth", login, password));
     }
 }

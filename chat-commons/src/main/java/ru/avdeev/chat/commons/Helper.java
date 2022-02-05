@@ -1,4 +1,4 @@
-package ru.avdeev.chat.server.utils;
+package ru.avdeev.chat.commons;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -37,6 +37,10 @@ public class Helper {
     }
 
     public static String createMessage(String command, String p1, String p2) {
+        return command + REGEX + p1 + REGEX + p2;
+    }
+
+    public static String createMessage(MessageType command, String p1, String p2) {
         return command + REGEX + p1 + REGEX + p2;
     }
 }

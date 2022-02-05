@@ -1,8 +1,8 @@
 package ru.avdeev.chat.server;
 
+import ru.avdeev.chat.commons.Message;
+import ru.avdeev.chat.commons.MessageType;
 import ru.avdeev.chat.server.entity.User;
-import ru.avdeev.chat.server.utils.Helper;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,7 +10,6 @@ import java.net.Socket;
 
 public class ClientHandler {
 
-    private final Socket socket;
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
     private final Server server;
@@ -22,7 +21,6 @@ public class ClientHandler {
 
     private ClientHandler(Socket socket, Server server) {
 
-        this.socket = socket;
         this.server = server;
 
         try {
@@ -37,7 +35,7 @@ public class ClientHandler {
     public void handle() {
 
         new Thread(() -> {
-            auth();
+            if (!auth())return;
             System.out.printf("Client auth success with login %s\n", user.getName());
             while (!Thread.currentThread().isInterrupted()) {
                 try {
@@ -52,48 +50,62 @@ public class ClientHandler {
         }).start();
     }
 
-    public void auth() {
+    public boolean auth() {
 
         System.out.println("Authorization");
+        boolean isAuth = false;
         while (true) {
             try {
                 String message = inputStream.readUTF();
-                String[] params = Helper.parseMessage(message);
-                if (params[0].equals("/auth") && server.getUserService().auth(params[1], params[2])) {
-                    outputStream.writeUTF(Helper.createMessage("/ok", params[1], ""));
-                    user = server.getUserService().getUser(params[1]);
+                System.out.println(message);
+                Message inMessage = new Message(message);
+                if (inMessage.getType() == MessageType.REQUEST_AUTH &&
+                        server.getUserService().auth(inMessage.getParams().get(0), inMessage.getParams().get(1))) {
+
+                    outputStream.writeUTF(
+                        new Message(MessageType.RESPONSE_AUTH_OK,
+                            new String[]{inMessage.getParams().get(0)}
+                        ).toString()
+                    );
+                    user = server.getUserService().getUser(inMessage.getParams().get(0));
                     server.addClient(this);
+                    isAuth = true;
                     break;
                 } else {
                     outputStream.writeUTF(
-                        Helper.createMessage("/error", "Auth error", "Wrong login or password")
+                        new Message(MessageType.RESPONSE_AUTH_ERROR,
+                            new String[]{"Auth error", "Wrong login or password"}
+                        ).toString()
                     );
                 }
-                System.out.println(message);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Unknown client disconnected");
+                Thread.currentThread().interrupt();
+                break;
             }
         }
+
+        return isAuth;
     }
 
     private void handleMessage(String message) {
         System.out.println(message);
-        String[] params = Helper.parseMessage(message);
-        switch (params[0]) {
-            case "/broadcast":
-                server.broadcastMessage(user, params[1]);
-                break;
-            case "/private":
-                server.privateMessage(user, server.getUserService().getUser(params[1]), params[2]);
-                break;
-            default:
-                break;
+        Message inMessage = new Message(message);
+        switch (inMessage.getType()) {
+            case SEND_ALL -> server.broadcastMessage(user, inMessage.getParams().get(0));
+            case SEND_PRIVATE -> server.privateMessage(
+                    user,
+                    server.getUserService().getUser(inMessage.getParams().get(0)),
+                    inMessage.getParams().get(1)
+            );
+            default -> {
+            }
         }
     }
 
-    public void send(String message) {
+    public void send(Message message) {
         try {
-            outputStream.writeUTF(message);
+            outputStream.writeUTF(message.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

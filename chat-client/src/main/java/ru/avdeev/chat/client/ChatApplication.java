@@ -14,7 +14,7 @@ public class ChatApplication extends Application {
     public void start(Stage stage) throws Exception {
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/main-window.fxml"));
+        loader.setLocation(getClass().getResource("/fxml/main-window.fxml"));
         Parent parent = loader.load();
         Scene scene = new Scene(parent);
         stage.setScene(scene);

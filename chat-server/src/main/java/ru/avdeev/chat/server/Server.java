@@ -1,8 +1,10 @@
 package ru.avdeev.chat.server;
 
+import ru.avdeev.chat.commons.Helper;
+import ru.avdeev.chat.commons.Message;
+import ru.avdeev.chat.commons.MessageType;
 import ru.avdeev.chat.server.auth.UserService;
 import ru.avdeev.chat.server.entity.User;
-import ru.avdeev.chat.server.utils.Helper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -43,15 +45,13 @@ public class Server {
     public void addClient(ClientHandler client) {
         clients.add(client);
         for (ClientHandler clientHandler : clients) {
-            clientHandler.send(
-                    Helper.createMessage("/online",
-                        client.getUser().getName(),
-                        client.getUser().getLogin())
+            clientHandler.send(new Message(MessageType.USER_ONLINE,
+                    new String[]{client.getUser().getName(), client.getUser().getLogin()})
             );
+
             client.send(
-                    Helper.createMessage("/online",
-                            clientHandler.getUser().getName(),
-                            clientHandler.getUser().getLogin())
+                    new Message(MessageType.USER_ONLINE,
+                            new String[]{clientHandler.getUser().getName(), clientHandler.getUser().getLogin()})
             );
         }
     }
@@ -61,17 +61,16 @@ public class Server {
         System.out.printf("Client %s disconnected\n", client.getUser().getName());
         for (ClientHandler clientHandler : clients) {
             clientHandler.send(
-                    Helper.createMessage("/offline",
-                        client.getUser().getName(),
-                        client.getUser().getLogin()
-                    )
+                    new Message(MessageType.USER_OFFLINE,
+                            new String[]{client.getUser().getName(), client.getUser().getLogin()})
             );
         }
     }
 
     public void broadcastMessage(User sender, String message) {
         for (ClientHandler client : clients) {
-            client.send(Helper.createMessage("/broadcast", sender.toString(), message));
+            client.send(new Message(MessageType.SEND_ALL,
+                    new String[]{sender.toString(), message}));
         }
     }
 
@@ -79,10 +78,9 @@ public class Server {
 
         for (ClientHandler client : clients) {
             if (client.getUser().equals(receiver)) {
-                client.send(Helper.createMessage("/private", sender.toString(), message));
+                client.send(new Message(MessageType.SEND_PRIVATE,
+                        new String[]{sender.toString(), message}));
             }
         }
     }
-
-
 }

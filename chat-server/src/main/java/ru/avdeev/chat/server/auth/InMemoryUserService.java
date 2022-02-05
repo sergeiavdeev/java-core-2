@@ -1,7 +1,7 @@
 package ru.avdeev.chat.server.auth;
 
+import ru.avdeev.chat.commons.Helper;
 import ru.avdeev.chat.server.entity.User;
-import ru.avdeev.chat.server.utils.Helper;
 
 import java.util.HashMap;
 import java.util.Map;
