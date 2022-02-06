@@ -56,6 +56,7 @@ public class NetworkService {
                     processMessage(message);
                 }
             } catch (IOException e) {
+                close();
                 e.printStackTrace();
             }
         });
@@ -67,6 +68,7 @@ public class NetworkService {
         try {
             outputStream.writeUTF(message.toString());
         } catch (IOException e) {
+            close();
             e.printStackTrace();
         }
     }
