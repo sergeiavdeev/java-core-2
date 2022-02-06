@@ -54,6 +54,8 @@ public class ClientHandler {
 
     public boolean auth() {
 
+        setTimeout();
+
         System.out.println("Authorization");
         boolean isAuth = false;
         while (true) {
@@ -116,4 +118,19 @@ public class ClientHandler {
     public User getUser() {
         return user;
     }
+
+    private void setTimeout() {
+        new Thread(() -> {
+            try {
+                sleep(120 * 1000);
+                if (user == null) {
+                    inputStream.close();
+                    outputStream.close();
+                }
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
 }
