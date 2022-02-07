@@ -19,7 +19,6 @@ WORKDIR /app
 COPY --from=builder /app/chat-server/target/*dependencies.jar /app/
 RUN mkdir /app/log
 RUN mkdir /app/config
-ENV JAVA_TOOL_OPTIONS=""
 
 EXPOSE 8181
-ENTRYPOINT ["sh", "-c", "java  ${JAVA_TOOL_OPTIONS} -jar chat-server-1.0-SNAPSHOT-jar-with-dependencies.jar"]
+CMD ["java", "-jar", "chat-server-1.0-SNAPSHOT-jar-with-dependencies.jar"]
