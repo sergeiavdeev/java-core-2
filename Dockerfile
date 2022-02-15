@@ -12,6 +12,7 @@ RUN mvn clean package
 
 
 FROM openjdk:17
+#FROM arm32v7/openjdk:11
 LABEL maintainer="Serg Avdeev"
 VOLUME /tmp
 WORKDIR /app

@@ -49,10 +49,10 @@ public class NetworkService {
     }
 
     public void readMessages() {
-        var thread = new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 while (!Thread.currentThread().isInterrupted() && !socket.isClosed()) {
-                    var message = inputStream.readUTF();
+                    String message = inputStream.readUTF();
                     processMessage(message);
                 }
             } catch (IOException e) {

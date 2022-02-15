@@ -96,14 +96,18 @@ public class ClientHandler {
         System.out.println(message);
         Message inMessage = new Message(message);
         switch (inMessage.getType()) {
-            case SEND_ALL -> server.broadcastMessage(user, inMessage.getParams().get(0));
-            case SEND_PRIVATE -> server.privateMessage(
+            case SEND_ALL:
+                server.broadcastMessage(user, inMessage.getParams().get(0));
+                break;
+            case SEND_PRIVATE:
+                server.privateMessage(
                     user,
                     server.getUserService().getUser(inMessage.getParams().get(0)),
                     inMessage.getParams().get(1)
-            );
-            default -> {
-            }
+                );
+                break;
+            default:
+                break;
         }
     }
 

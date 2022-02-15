@@ -66,12 +66,12 @@ public class MainController implements Initializable, MessageProcessor {
     }
 
     public void sendMessage(ActionEvent actionEvent) {
-        var message = messageField.getText();
-        if (message.isBlank()) {
+        String message = messageField.getText();
+        if (message.isEmpty()) {
             return;
         }
 
-        var contact = contactList.getSelectionModel().getSelectedItem();
+        String contact = contactList.getSelectionModel().getSelectedItem();
         if (contact == null || contact.equals("ALL")) {
             //networkService.sendMessage(Helper.createMessage("/broadcast", message, ""));
             networkService.sendMessage(new Message(MessageType.SEND_ALL, new String[]{message}));
@@ -114,16 +114,23 @@ public class MainController implements Initializable, MessageProcessor {
     }
 
     private void parseIncomingMessage(String message) {
-        var inMessage = new Message(message);
+        Message inMessage = new Message(message);
         switch (inMessage.getType()) {
-            case RESPONSE_AUTH_OK -> {
+            case RESPONSE_AUTH_OK:
                 this.nick = inMessage.getParams().get(0);
                 chatPanel.setVisible(true);
                 ChatApplication.getStage().setTitle("Easy Chat - " + nick);
-            }
-            case SEND_ALL, SEND_PRIVATE -> chatArea.appendText(inMessage.getParams().get(0) + ": " + inMessage.getParams().get(1) + System.lineSeparator());
-            case USER_ONLINE -> contacts.add(inMessage.getParams().get(0));
-            case USER_OFFLINE -> contacts.remove(inMessage.getParams().get(0));
+                break;
+            case SEND_ALL:
+            case SEND_PRIVATE:
+                chatArea.appendText(inMessage.getParams().get(0) + ": " + inMessage.getParams().get(1) + System.lineSeparator());
+                break;
+            case USER_ONLINE:
+                contacts.add(inMessage.getParams().get(0));
+                break;
+            case USER_OFFLINE:
+                contacts.remove(inMessage.getParams().get(0));
+                break;
         }
     }
 }

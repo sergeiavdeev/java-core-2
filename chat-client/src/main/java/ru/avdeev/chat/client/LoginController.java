@@ -8,7 +8,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import ru.avdeev.chat.client.network.NetworkService;
-import ru.avdeev.chat.commons.Helper;
 import ru.avdeev.chat.commons.Message;
 import ru.avdeev.chat.commons.MessageType;
 
@@ -21,19 +20,23 @@ public class LoginController {
 
     public void sendAuth(ActionEvent actionEvent) {
 
-        var login = loginField.getText();
-        var password = passwordField.getText();
-        if (login.isBlank() || password.isBlank()) {
+        String login = loginField.getText();
+        String password = passwordField.getText();
+        if (login.isEmpty() || password.isEmpty()) {
             return;
         }
 
         NetworkService networkService = NetworkService.getInstance();
 
         networkService.addMessageProcessor((message -> {
-            var inMessage = new Message(message);
+            Message inMessage = new Message(message);
             switch (inMessage.getType()) {
-                case RESPONSE_AUTH_OK -> loginPanel.setVisible(false);
-                case RESPONSE_AUTH_ERROR -> Platform.runLater(() -> showError("Wrong login or password"));
+                case RESPONSE_AUTH_OK:
+                    loginPanel.setVisible(false);
+                    break;
+                case RESPONSE_AUTH_ERROR:
+                    Platform.runLater(() -> showError("Wrong login or password"));
+                    break;
             }
         }));
 
@@ -50,7 +53,7 @@ public class LoginController {
     }
 
     private void showError(String message) {
-        var alert = new Alert(Alert.AlertType.ERROR,
+        Alert alert = new Alert(Alert.AlertType.ERROR,
                 "An error occurred: " + message,
                 ButtonType.OK);
         alert.showAndWait();

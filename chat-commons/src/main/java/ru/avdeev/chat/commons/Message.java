@@ -47,14 +47,30 @@ public class Message {
 
     private void setType(String t) {
         switch (t) {
-            case "/REQUEST_AUTH" -> type = MessageType.REQUEST_AUTH;
-            case "/RESPONSE_AUTH_OK" -> type = MessageType.RESPONSE_AUTH_OK;
-            case "/RESPONSE_AUTH_ERROR" -> type = MessageType.RESPONSE_AUTH_ERROR;
-            case "/SEND_ALL" -> type = MessageType.SEND_ALL;
-            case "/SEND_PRIVATE" -> type = MessageType.SEND_PRIVATE;
-            case "/USER_ONLINE" -> type = MessageType.USER_ONLINE;
-            case "/USER_OFFLINE" -> type = MessageType.USER_OFFLINE;
-            default -> type = MessageType.UNDEFINED;
+            case "/REQUEST_AUTH":
+                type = MessageType.REQUEST_AUTH;
+                break;
+            case "/RESPONSE_AUTH_OK":
+                type = MessageType.RESPONSE_AUTH_OK;
+                break;
+            case "/RESPONSE_AUTH_ERROR":
+                type = MessageType.RESPONSE_AUTH_ERROR;
+                break;
+            case "/SEND_ALL":
+                type = MessageType.SEND_ALL;
+                break;
+            case "/SEND_PRIVATE":
+                type = MessageType.SEND_PRIVATE;
+                break;
+            case "/USER_ONLINE":
+                type = MessageType.USER_ONLINE;
+                break;
+            case "/USER_OFFLINE":
+                type = MessageType.USER_OFFLINE;
+                break;
+            default:
+                type = MessageType.UNDEFINED;
+                break;
         }
     }
 }
